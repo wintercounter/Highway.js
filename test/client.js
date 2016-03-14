@@ -11,13 +11,12 @@ describe('Initialize Worker', function() {
 var Host = !self.Worker ? new self.Worker('./worker.js') : self;
 self.HW = self.HW || new self.Highway(Host);
 
-self.HW.sub('kalanc', function(){
-	console.log('kalanc')
-})
+self.HW.sub('$', $happened)
+self.HW.off('$')
 
-self.HW.sub('$', function(){
+function $happened(){
 	console.log('$ happened')
-})
+}
 
 self.HW.sub('$->test', function(){
 	console.log('$->test happened')
