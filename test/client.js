@@ -1,14 +1,33 @@
-/*var expect = chai.expect;
-var should = chai.should();
-var w = self
+"use strict"
 
-describe('Initialize Worker', function() {
-	it('should detect worker support', function() {
-		expect(true).to.equal(!!self.Worker);
-	});
-});*/
+var assert = chai.assert
 
-var Host = !self.Worker ? new self.Worker('./worker.js') : self;
+suite('Highway.js', function() {
+	var Host, HW
+	var ForceFallback = false
+
+	setup(function(){
+		Host = self.Worker && !ForceFallback ? new self.Worker('./worker.js') : self
+		HW   = new Highway(Host)
+	})
+
+	test('initialization', function(){
+
+	})
+
+	test('pub-sub', function(){
+
+	})
+
+	test('sub', function(){
+
+	})
+
+	teardown(function(){
+		Host.terminate && Host.terminate()
+	})
+});
+
 self.HW = self.HW || new self.Highway(Host);
 
 self.HW.sub('$', $happened)
