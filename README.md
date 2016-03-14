@@ -84,3 +84,7 @@ Destroy the Highway instance.
 ```javascript
 self.HW.destroy()
 ```
+
+#Credits
+[Victor Vincent](http://wintercounter.me)
+[DoclerLabs](http://doclerlabs.com)
