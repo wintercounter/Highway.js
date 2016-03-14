@@ -1,6 +1,8 @@
 # Highway.js
 A flexible pub/sub event emitter for web-worker cross-communication with fallback support.
 
+!["Highway PubSub Cross-Communication"](https://gitcdn.link/repo/DoclerLabs/Highway.js/master/www/cross.png)
+
 ##Usage
 Include **Highway.js** on both client side and worker side.
 
