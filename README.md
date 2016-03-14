@@ -1,5 +1,5 @@
 # Highway.js
-An flexible pub/sub event emitter for web-worker cross-communication with fallback support.
+A flexible pub/sub event emitter for web-worker cross-communication with fallback support.
 
 ##Usage
 Include **Highway.js** on both client side and worker side.

@@ -1,10 +1,22 @@
+/**
+ * Delimiter to split event routes
+ * @type {string}
+ */
 const DELIMITER = '->'
+
+/**
+ * Default bucket prototype
+ * @type {{*: {handlers: Array}}}
+ */
 const DEFAULT_BUCKET = {
 	'*': {
 		handlers: []
 	}
 }
 
+/**
+ * Main Highway JS class
+ */
 export default class Highway {
 
 	/**
