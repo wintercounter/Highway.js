@@ -123,3 +123,5 @@ self.HW.destroy()
 #Credits
 [Victor Vincent](http://wintercounter.me)
 [DoclerLabs](http://doclerlabs.com)
+
+![](http://c.statcounter.com/10870964/0/443694a8/1/)
