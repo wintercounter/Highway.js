@@ -8,11 +8,14 @@
 	<script src="./bower_components/chai/chai.js"></script>
 	<script src="./bower_components/mocha/mocha.js"></script>
 	<script src="../dist/Highway.js"></script>
-	<script>mocha.setup('bdd')</script>
-	<script src="client.js"></script>
-	<script src="worker.js"></script>
 	<script>
-		mocha.run();
+		mocha.setup({
+			ui: 'tdd'
+		})
+	</script>
+	<script src="client.js"></script>
+	<script>
+		mocha.run()
 	</script>
 </body>
 </html>

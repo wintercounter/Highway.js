@@ -50,12 +50,15 @@ export default class Highway {
 	/**
 	 * Publish an event
 	 * @param name  {String} The event's name
-	 * @param data  {Object} Custom event data
+	 * @param data  [Mixed]  Custom event data
 	 * @param state [String] Optional state identifier
 	 * @returns {Highway}
 	 */
-	pub(name, data, state = undefined) {
-		Highway.Host.postMessage({name, data, state}, self === window ? location.origin : Highway.Host)
+	pub(name, data = undefined, state = undefined) {
+		Highway.Host.postMessage(
+			{name, data, state},
+			Highway.Host === self.window ? self.location.origin : undefined
+		)
 		return this
 	}
 
@@ -112,8 +115,8 @@ export default class Highway {
 				}
 				else {
 					temp = temp[k];
-					temp.handlers && temp.handlers.forEach((hd, ind, arr) => {
-						(hd === handler || handler === undefined) && arr.splice(ind, 1)
+					temp.handlers = temp.handlers.filter((fn) => {
+						return !(fn === handler || handler === undefined)
 					})
 				}
 			}
