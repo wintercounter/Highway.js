@@ -4,11 +4,21 @@ var assert = chai.assert
 
 suite('Highway.js', function() {
 	var Host, HW
-	var ForceFallback = false
+	var WORKER_PATH = './worker.js'
+	var ForceFallback = false // Set this manually to test without worker. Coverage needs this also.
+	var IsWorker = self.Worker && !ForceFallback
+
+	if (!IsWorker) {
+		var script = document.createElement('script')
+		script.setAttribute('src', WORKER_PATH)
+		document.body.appendChild(script)
+	}
+
+	Host = IsWorker ? new self.Worker(WORKER_PATH) : self
+	self.HW = HW = new Highway(Host)
 
 	setup(function(){
-		Host = self.Worker && !ForceFallback ? new self.Worker('./worker.js') : self
-		self.HW = HW = new Highway(Host)
+		self.InitWorker && self.InitWorker()
 	})
 
 	test('exe', function(done){
@@ -60,7 +70,16 @@ suite('Highway.js', function() {
 		HW.pub('testPub1')
 		HW.pub('testPub2')
 		HW.pub('testPub3')
-		setTimeout(function(){ i === 3 && done() }, 200)
+		setTimeout(function(){
+			// 3 = Worker based test
+			// 6 = Browser (fallback) based test \ normal*3 + W*3
+			if (
+				(!IsWorker && i === 6)
+				|| (IsWorker && i === 3)
+			) {
+				done()
+			}
+		}, 200)
 	})
 
 	test('one', function(done){
@@ -78,7 +97,7 @@ suite('Highway.js', function() {
 		HW.sub('W->testPub1', function(){ i++ })
 		HW.off('W->testPub1', fn)
 		HW.pub('testPub1')
-		setTimeout(function(){ console.log(i); i === 1 && done() }, 200)
+		setTimeout(function(){ i === 1 && done() }, 200)
 	})
 
 	test('off all', function(done){
@@ -108,32 +127,6 @@ suite('Highway.js', function() {
 	})
 
 	teardown(function(){
-		Host.terminate && Host.terminate()
+		self.HW.reset()
 	})
-});
-/*
-
-self.HW = self.HW || new self.Highway(Host);
-
-self.HW.sub('$', $happened)
-self.HW.off('$')
-
-self.HW.exe(function(){
-	console.log('Exec done')
 })
-
-function $happened(){
-	console.log('$ happened')
-}
-
-self.HW.sub('$->test', function(){
-	console.log('$->test happened')
-})
-
-self.HW.sub('$->test->one', function(){
-	console.log('$->test->one happened', arguments)
-})
-
-self.HW.sub('*', function(ev){
-	console.log('*', ev.name)
-})*/

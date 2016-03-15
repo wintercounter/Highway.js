@@ -29,21 +29,21 @@ export default class Highway {
 	 * Host object
 	 * @static
 	 */
-	static Host
+	Host
 
 	/**
 	 * Bucket to store handlers
 	 * @type {{*: {handlers: Array}}}
 	 */
-	static Bucket
+	Bucket
 
 	/**
 	 * @constructor
 	 * @param Host {Window || Worker}
 	 */
 	constructor(Host = self) {
-		Highway.Host   = Host
-		Highway.Bucket = Object.assign({}, DEFAULT_BUCKET)
+		this.Host   = Host
+		this.reset()
 		this._bind()
 	}
 
@@ -55,9 +55,9 @@ export default class Highway {
 	 * @returns {Highway}
 	 */
 	pub(name, data = undefined, state = undefined) {
-		Highway.Host.postMessage(
+		this.Host.postMessage(
 			{name, data, state},
-			Highway.Host === self.window ? self.location.origin : undefined
+			this.Host === self.window ? self.location.origin : undefined
 		)
 		return this
 	}
@@ -74,7 +74,7 @@ export default class Highway {
 		handler.one = one
 
 		// Apply segments and prototype
-		let temp = Highway.Bucket
+		let temp = this.Bucket
 		name.split(DELIMITER).forEach((k, i, a) => {
 			if (!temp.hasOwnProperty(k)) {
 				temp[k] = {
@@ -106,7 +106,7 @@ export default class Highway {
 	 * @returns {Highway}
 	 */
 	off(name, handler = undefined) {
-		let temp = Highway.Bucket
+		let temp = this.Bucket
 
 		name.split(DELIMITER).forEach((k, i, a) => {
 			if (temp.hasOwnProperty(k)) {
@@ -136,7 +136,16 @@ export default class Highway {
 	 * Destroy the full Highway instance
 	 */
 	destroy() {
-		Highway.Host.removeEventListener('message', ::this._handler)
+		this.Host.removeEventListener('message', ::this._handler)
+		delete this.Bucket
+	}
+
+	/**
+	 * Resets Bucket to default
+	 */
+	reset(){
+		DEFAULT_BUCKET['*'].handlers = []
+		this.Bucket = Object.assign({}, DEFAULT_BUCKET)
 	}
 
 	/**
@@ -144,7 +153,7 @@ export default class Highway {
 	 * @private
 	 */
 	_bind() {
-		Highway.Host.addEventListener('message',::this._handler)
+		this.Host.addEventListener('message', ::this._handler)
 		this.sub(EV_EXECUTE, function(ev){
 			(new Function(ev.data)).call(self)
 		})
@@ -156,10 +165,12 @@ export default class Highway {
 	 * @private
 	 */
 	_handler(ev) {
-		let parsed = Highway.Bucket
+		let parsed = this.Bucket
+		let nope = false
+
 		parsed['*'].handlers.forEach((fn) => fn.call(null, ev.data))
 		ev.data.name.split(DELIMITER).forEach((segment) => {
-			if (parsed.hasOwnProperty(segment)) {
+			if (!nope && parsed.hasOwnProperty(segment)) {
 				parsed = parsed[segment]
 
 				parsed.handlers.length
@@ -167,6 +178,9 @@ export default class Highway {
 					fn.call(null, ev.data)
 					fn.one && arr.splice(i, 1)
 				})
+			}
+			else {
+				nope = true
 			}
 		})
 	}
