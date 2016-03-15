@@ -25,9 +25,32 @@ self.HW = self.HW || new self.Highway(Host)
 self.HW = self.HW || new self.Highway()
 ```
 
-Note that you cannot use `importScripts` in case you want proper fallback if there is no web-worker support.
-In that you need to include a bundle in `new Worker('worker.bundle.js')` and the bundle should also include Highway.
+Note that you cannot use `importScripts` in case you want proper fallback when there is no web-worker support.
+In that case you need to include a bundle in `new Worker('worker.bundle.js')` and the bundle should also include Highway.
 This way you can include your worker bundle on the client side after no worker support is detected.
+
+```javascript
+// On client side
+if (!self.Worker) {
+    var script = document.createElement('script')
+    script.setAttribute('src', 'worker.bundle.js')
+    document.body.appendChild(script)
+}
+```
+
+In most cases you want to initialize client side stuff after the worker is loaded. Use your own event for this.
+For example you need your data model from the backend before rendering the site.
+
+```javascript
+// Client side
+self.HW.one('ready', function(){
+    InitSomeGUIFramework()
+})
+// Worker side
+InitSomeDataModelStuff()
+InitSomeWebSocketConnection()
+self.HW.pub('ready')
+```
 
 ##API
 
@@ -63,6 +86,16 @@ Subscribe to an event, unsubscribe once it is called.
 ```javascript
 self.HW.one('MyOwnEventOnce', function(){
     // I'll just run once and automatically unsubscribe then
+})
+```
+
+###exe
+
+Execute a function on the other side. Your function will be executed within `self` context.
+
+```javascript
+self.HW.exe(function(){
+    // Do some code
 })
 ```
 

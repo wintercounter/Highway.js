@@ -14,6 +14,10 @@ self.HW = self.HW || new self.Highway(Host);
 self.HW.sub('$', $happened)
 self.HW.off('$')
 
+self.HW.exe(function(){
+	console.log('Exec done')
+})
+
 function $happened(){
 	console.log('$ happened')
 }

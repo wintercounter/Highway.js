@@ -15,6 +15,12 @@ const DEFAULT_BUCKET = {
 }
 
 /**
+ * 'exe' method event name
+ * @type {String}
+ */
+const EV_EXECUTE = 'HWEXECUTE'
+
+/**
  * Main Highway JS class
  */
 export default class Highway {
@@ -116,6 +122,14 @@ export default class Highway {
 	}
 
 	/**
+	 * Execute a function on the other side.
+	 * @param fn {Function} The function to execute.
+	 */
+	exe(fn){
+		this.pub(EV_EXECUTE, fn.toString().match(/function[^{]+\{([\s\S]*)}$/)[1])
+	}
+
+	/**
 	 * Destroy the full Highway instance
 	 */
 	destroy() {
@@ -128,6 +142,9 @@ export default class Highway {
 	 */
 	_bind() {
 		Highway.Host.addEventListener('message',::this._handler)
+		this.sub(EV_EXECUTE, function(ev){
+			(new Function(ev.data)).call(self)
+		})
 	}
 
 	/**
