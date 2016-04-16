@@ -185,6 +185,3 @@ export default class Highway {
 		})
 	}
 }
-
-// Make Highway globally available
-self.Highway = Highway
