@@ -1,9 +1,7 @@
 var gulp = require('gulp');
 var fs = require('fs');
 var browserify = require('browserify');
-var watchify = require('watchify');
 var babelify = require('babelify');
-var rimraf = require('rimraf');
 var source = require('vinyl-source-stream');
 var _ = require('lodash');
 
@@ -13,19 +11,8 @@ var config = {
 	outputFile: 'Highway.js'
 };
 
-// clean the output directory
-gulp.task('clean', function(cb){
-	rimraf(config.outputDir, cb);
-});
-
-var bundler;
-function getBundler(c) {
-	bundler = watchify(browserify(c.entryFile, _.extend({ debug: true }, watchify.args)));
-	return bundler;
-};
-
 function bundle(c) {
-	return getBundler(c)
+	return browserify(c.entryFile, { debug: true, node: true, standalone: 'Highway' })
 		.transform(babelify, {
 			presets: ["es2015"],
 			plugins: [

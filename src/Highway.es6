@@ -42,7 +42,7 @@ export default class Highway {
 	 * @param Host {Window || Worker}
 	 */
 	constructor(Host = self) {
-		this.Host   = Host
+		this.Host = Host
 		this.reset()
 		this._bind()
 	}
