@@ -1,6 +1,6 @@
 {
   "name": "Highway",
-  "version": "0.0.5",
+  "version": "0.1.1",
   "description": "An extremely flexible event emitter not only for web-workers.",
   "main": "dist/Highway.js",
   "jsnext:main": "src/Highway.es6",

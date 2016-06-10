@@ -7,14 +7,14 @@ export default class EventEmitterProxy {
 	}
 
 	postMessage(message = {}){
-		this.EventEmitter.emit('chambr-message', message)
+		this.EventEmitter.emit('highway-message', message)
 	}
 
 	addEventListener(handler){
-		this.EventEmitter.on('chambr-message', handler)
+		this.EventEmitter.on('highway-message', handler)
 	}
 
 	removeEventListener(handler){
-		this.EventEmitter.removeEventListener('chambr-message', handler)
+		this.EventEmitter.removeEventListener('highway-message', handler)
 	}
 }
