@@ -1,39 +1,38 @@
-var gulp = require('gulp');
-var fs = require('fs');
-var browserify = require('browserify');
-var babelify = require('babelify');
-var source = require('vinyl-source-stream');
-var _ = require('lodash');
+'use strict'
 
-var config = {
-	entryFile: './src/Highway.es6',
-	outputDir: './dist/',
-	outputFile: 'Highway.js'
-};
+const gulp    = require('gulp')
+const babel   = require('gulp-babel')
+const webpack = require('webpack-stream')
+const named   = require('vinyl-named')
 
-function bundle(c) {
-	return browserify(c.entryFile, { debug: true, node: true, standalone: 'Highway' })
-		.transform(babelify, {
-			presets: ["es2015"],
+function BabelTask(src, dist){
+	return gulp.src(src)
+		.pipe(babel({
+			presets: ['es2015'],
 			plugins: [
-				"transform-class-properties",
-				"syntax-decorators",
-				"transform-decorators-legacy",
-				"syntax-async-functions",
-				"transform-regenerator",
-				"transform-function-bind"
+				'transform-class-properties',
+				'transform-object-assign',
+				'syntax-decorators',
+				'transform-decorators-legacy',
+				'syntax-async-functions',
+				'transform-regenerator',
+				'transform-function-bind'
 			]
-		})
-		.bundle()
-		.on('error', function(err) { console.log('Error: ' + err.message); })
-		.pipe(source(c.outputFile))
-		.pipe(gulp.dest(c.outputDir));
+		}))
+		.pipe(gulp.dest(dist))
 }
 
-gulp.task('build-persistent', function() {
-	return bundle(config);
-});
+gulp.task('build', () => {
+	return BabelTask('./src/**/*.js', './dist')
+})
 
-gulp.task('build', ['build-persistent'], function() {
-	process.exit(0);
-});
+gulp.task('build-test-babel', ['build'], () => {
+	return BabelTask('./test/*.js', './test/dist/')
+})
+
+gulp.task('build-test', ['build-test-babel'], () => {
+	return gulp.src('./test/dist/*.js')
+		.pipe(named())
+		.pipe(webpack())
+		.pipe(gulp.dest('./test/dist/'))
+})

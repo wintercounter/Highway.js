@@ -1,10 +1,11 @@
 "use strict"
 
-var assert = chai.assert
+import Highway from '../../dist/Highway'
+import WebWorker from '../../dist/Proxy/WebWorker'
 
 suite('Highway.js', function() {
 	var Host, HW
-	var WORKER_PATH = './worker.js'
+	var WORKER_PATH = './dist/Worker.js'
 	var ForceFallback = false // Set this manually to test without worker. Coverage needs this also.
 	var IsWorker = self.Worker && !ForceFallback
 
@@ -15,7 +16,7 @@ suite('Highway.js', function() {
 	}
 
 	Host = IsWorker ? new self.Worker(WORKER_PATH) : self
-	self.HW = HW = new Highway(Host)
+	self.HW = HW = new Highway(new WebWorker(Host))
 
 	setup(function(){
 		self.InitWorker && self.InitWorker()
