@@ -163,7 +163,7 @@ export default class Highway {
 	 */
 	_handler(ev) {
 		let parsed = this.Bucket
-		let nope = false
+		let nope   = false
 
 		parsed['*'].handlers.forEach((fn) => fn.call(null, ev.data))
 		ev.data.name.split(DELIMITER).forEach((segment) => {
