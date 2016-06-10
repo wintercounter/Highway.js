@@ -6,29 +6,21 @@ A flexible pub/sub event emitter for web-worker cross-communication with fallbac
 ##Usage
 Include **Highway.js** on both client side and worker side.
 
-Client:
-```html
-<script src="Highway.js"></script>
-```
-
-Worker:
+Import Highway and a Proxy you want to use, both in client side and worker side:
 ```javascript
-importScripts('Highway.js')
+import Highway from 'Highway'
+import WebWorkerProxy from 'Highway/Proxy/WebWorker'
 ```
 
 Initialize:
 ```javascript
 // Client side
 var Host = self.Worker ? new self.Worker('worker.bundle.js') : self
-self.HW = self.HW || new self.Highway(Host)
+self.HW = self.HW || new Highway(new WebWorkerProxy(Host))
 // Worker side
-self.HW = self.HW || new self.Highway()
+self.HW = self.HW || new Highway(new WebWorkerProxy(self))
 ```
-
-Note that you cannot use `importScripts` in case you want proper fallback when there is no web-worker support.
-In that case you need to include a bundle in `new Worker('worker.bundle.js')` and the bundle should also include Highway.
-This way you can include your worker bundle on the client side after no worker support is detected.
-
+Fallback when there is no worker support:
 ```javascript
 // On client side
 if (!self.Worker) {
