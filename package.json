@@ -1,9 +1,10 @@
 {
   "name": "Highway",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An extremely flexible event emitter not only for web-workers.",
-  "main": "dist/Highway.js",
-  "jsnext:main": "src/Highway.es6",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "coverage": "istanbul cover _mocha -- -R spec"
