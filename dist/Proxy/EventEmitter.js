@@ -22,7 +22,9 @@ var EventEmitterProxy = function () {
 		value: function postMessage() {
 			var message = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-			this.EventEmitter.emit('highway-message', message);
+			this.EventEmitter.emit('highway-message', {
+				data: message
+			});
 		}
 	}, {
 		key: 'addEventListener',

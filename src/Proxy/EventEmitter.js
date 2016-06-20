@@ -7,7 +7,9 @@ export default class EventEmitterProxy {
 	}
 
 	postMessage(message = {}){
-		this.EventEmitter.emit('highway-message', message)
+		this.EventEmitter.emit('highway-message', {
+			data: message
+		})
 	}
 
 	addEventListener(handler){
