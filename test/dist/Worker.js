@@ -93,24 +93,17 @@
 	var Highway = function () {
 
 		/**
-	  * Proxy object
-	  * @static
-	  */
-
-
-		/**
-	  * Bucket to store handlers
-	  * @type {{*: {handlers: Array}}}
-	  */
-
-
-		/**
 	  * @constructor
 	  * @param Proxy
 	  */
 
+
+		/**
+	  * Proxy object
+	  * @static
+	  */
 		function Highway() {
-			var Proxy = arguments.length <= 0 || arguments[0] === undefined ? self : arguments[0];
+			var Proxy = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : self;
 
 			_classCallCheck(this, Highway);
 
@@ -128,11 +121,17 @@
 	  */
 
 
+		/**
+	  * Bucket to store handlers
+	  * @type {{*: {handlers: Array}}}
+	  */
+
+
 		_createClass(Highway, [{
 			key: 'pub',
 			value: function pub(name) {
-				var data = arguments.length <= 1 || arguments[1] === undefined ? undefined : arguments[1];
-				var state = arguments.length <= 2 || arguments[2] === undefined ? undefined : arguments[2];
+				var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+				var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 
 				this.Proxy.postMessage({ name: name, data: data, state: state });
 				return this;
@@ -149,7 +148,7 @@
 		}, {
 			key: 'sub',
 			value: function sub(name, handler) {
-				var one = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+				var one = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
 				// Apply one prop
 				handler.one = one;
@@ -197,7 +196,7 @@
 		}, {
 			key: 'off',
 			value: function off(name) {
-				var handler = arguments.length <= 1 || arguments[1] === undefined ? undefined : arguments[1];
+				var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
 				var temp = this.Bucket;
 
@@ -234,7 +233,7 @@
 		}, {
 			key: 'destroy',
 			value: function destroy() {
-				this.Proxy.removeEventListener(this._handler.bind(this));
+				this.Proxy.removeEventListener(this.handler);
 				delete this.Bucket;
 			}
 
@@ -257,20 +256,27 @@
 		}, {
 			key: '_bind',
 			value: function _bind() {
-				this.Proxy.addEventListener(this._handler.bind(this));
+				this.Proxy.addEventListener(this.handler);
 				this.sub(EV_EXECUTE, function (ev) {
 					new Function(ev.data).call(self);
 				});
 			}
 
 			/**
-	   * onMessage callback handler
-	   * @param ev {WorkerEvent}
-	   * @private
+	   * Returns an already binded handler,
+	   * so this handler can be used to remove event listener.
+	   * @returns {*}
 	   */
 
 		}, {
 			key: '_handler',
+
+
+			/**
+	   * onMessage callback handler
+	   * @param ev {WorkerEvent}
+	   * @private
+	   */
 			value: function _handler(ev) {
 				var parsed = this.Bucket;
 				var nope = false;
@@ -290,6 +296,12 @@
 						nope = true;
 					}
 				});
+			}
+		}, {
+			key: 'handler',
+			get: function get() {
+				this.__handler = this.__handler || this._handler.bind(this);
+				return this.__handler;
 			}
 		}]);
 

@@ -20,7 +20,7 @@ var EventEmitterProxy = function () {
 	_createClass(EventEmitterProxy, [{
 		key: 'postMessage',
 		value: function postMessage() {
-			var message = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			this.EventEmitter.emit('highway-message', {
 				data: message

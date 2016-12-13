@@ -133,7 +133,7 @@ export default class Highway {
 	 * Destroy the full Highway instance
 	 */
 	destroy() {
-		this.Proxy.removeEventListener(::this._handler)
+		this.Proxy.removeEventListener(this.handler)
 		delete this.Bucket
 	}
 
@@ -150,10 +150,20 @@ export default class Highway {
 	 * @private
 	 */
 	_bind() {
-		this.Proxy.addEventListener(::this._handler)
+		this.Proxy.addEventListener(this.handler)
 		this.sub(EV_EXECUTE, function(ev){
 			(new Function(ev.data)).call(self)
 		})
+	}
+
+	/**
+	 * Returns an already binded handler,
+	 * so this handler can be used to remove event listener.
+	 * @returns {*}
+	 */
+	get handler() {
+		this.__handler = this.__handler || ::this._handler;
+		return this.__handler;
 	}
 
 	/**

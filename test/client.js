@@ -15,11 +15,9 @@ suite('Highway.js', function() {
 		document.body.appendChild(script)
 	}
 
-	Host = IsWorker ? new self.Worker(WORKER_PATH) : self
-	self.HW = HW = new Highway(new WebWorker(Host))
-
 	setup(function(){
-		self.InitWorker && self.InitWorker()
+        Host = IsWorker ? new self.Worker(WORKER_PATH) : self
+        self.HW = HW = new Highway(new WebWorker(Host))
 	})
 
 	test('exe', function(done){
@@ -128,6 +126,6 @@ suite('Highway.js', function() {
 	})
 
 	teardown(function(){
-		self.HW.reset()
+		self.HW.destroy()
 	})
 })
