@@ -1,21 +1,22 @@
 # Highway.js
-A flexible pub/sub event emitter for web-worker cross-communication with fallback support.
+A flexible pub/sub event emitter for web-worker (and more) cross-communication with fallback support.
+Worker can be anything: an Iframe, a WebWorker, a ServiceWorker, a Node WS Server.
 
 !["Highway PubSub Cross-Communication"](/www/cross.png)
 
-##Usage
+## Usage
 Include **Highway.js** on both client side and worker side.
 
 Import Highway and a Proxy you want to use, both in client side and worker side:
-```javascript
+```js
 import Highway from 'Highway'
 import WebWorkerProxy from 'Highway/Proxy/WebWorker'
 ```
 
 Initialize:
-```javascript
+```js
 // Client side
-var Host = self.Worker ? new self.Worker('worker.bundle.js') : self
+const Host = self.Worker ? new self.Worker('worker.bundle.js') : self
 self.HW = self.HW || new Highway(new WebWorkerProxy(Host))
 // Worker side
 self.HW = self.HW || new Highway(new WebWorkerProxy(self))
@@ -24,96 +25,109 @@ Fallback when there is no worker support:
 ```javascript
 // On client side
 if (!self.Worker) {
-    var script = document.createElement('script')
+    const script = document.createElement('script')
     script.setAttribute('src', 'worker.bundle.js')
     document.body.appendChild(script)
 }
 ```
 
-In most cases you want to initialize client side stuff after the worker is loaded. Use your own event for this.
+In most cases you want to initialize client side stuff after the worker is loaded.
+Use your own event for this.
 For example you need your data model from the backend before rendering the site.
 
-```javascript
+```js
 // Client side
-self.HW.one('ready', function(){
-    InitSomeGUIFramework()
-})
+HW.one('ready', InitSomeGUIFramework)
 // Worker side
 InitSomeDataModelStuff()
 InitSomeWebSocketConnection()
-self.HW.pub('ready')
+HW.pub('ready')
 ```
 
-##API
+## API
 
-###sub
+### HW.sub(string eventName, callable callback [,boolean one = false])
 
 Subscribe to an event.
 
-```javascript
-self.HW.sub('MyOwnEvent', function(){
+```js
+HW.sub('MyOwnEvent', function(){
     // Do something when event occurs
     // See pub, this will run 3 times
 })
-self.HW.sub('MyOwnEvent->DidSomething', function(){
+HW.sub('MyOwnEvent->DidSomething', function(){
     // Do something when event occurs
     // See pub, this will run once
 })
 ```
 
-###pub
+### HW.pub(eventName[, customData, customState])
 
 Publish an event.
 
-```javascript
-self.HW.pub('MyOwnEvent', customData)
-self.HW.pub('MyOwnEvent->DidSomething', customData)
-self.HW.pub('MyOwnEvent->IHaveState', customData, 'passed')
+```js
+HW.pub('MyOwnEvent', { customData })
+HW.pub('MyOwnEvent->DidSomething', { customData })
+HW.pub('MyOwnEvent->IHaveState', { customData }, 'passed')
 ```
 
-###one
+### HW.one(eventName, callback)
 
-Subscribe to an event, unsubscribe once it is called.
+Subscribe to an event, unsubscribe once it is called. It's a shorthand for
+`HW.sub(eventName, callback, true)`
 
-```javascript
-self.HW.one('MyOwnEventOnce', function(){
+```js
+HW.one('MyOwnEventOnce', function(){
     // I'll just run once and automatically unsubscribe then
 })
 ```
 
-###exe
+### HW.exe(callable)
 
 Execute a function on the other side. Your function will be executed within `self` context.
 
 ```javascript
-self.HW.exe(function(){
+HW.exe(() => {
     // Do some code
 })
 ```
 
-###off
+#### Disable exe
+
+```js
+HW.allowExe = false
+```
+
+> You might want to disable this if you're using Node as you backend for example.
+> Function is passed over as a string and it's executed by `eval` which is a high security risk.
+
+### off
 
 Unsubscribe from an event.
 
 ```javascript
 // Unsubscribe from ALL events associated with MyOwnEvent
-self.HW.off('MyOwnEvent')
-// Unsubscribe only a specific function
-self.HW.off('MyOwnEvent', handlerFunction)
-// Unsubscribe from ALL events associated with MyOwnEvent and event the deep ones. eg: MyOwnEvent->DeepEvent too
-self.HW.off('MyOwnEvent', true)
+HW.off('MyOwnEvent')
+// Unsubscribe only a specific callback
+HW.off('MyOwnEvent', callback)
+// Unsubscribe from ALL events associated with MyOwnEvent, even the deep ones. eg: MyOwnEvent->DeepEvent too
+HW.off('MyOwnEvent', true)
 ```
 
-###destroy
+### destroy
 
 Destroy the Highway instance.
 
 ```javascript
-self.HW.destroy()
+HW.destroy()
 ```
+
+## Proxies
+- EventEmitter: for everything which uses the node EventEmitter interface (like socket.io)
+- Iframe
+- WebWorker: for both Web and Service Workers
 
 #Credits
 [Victor Vincent](http://wintercounter.me)
-[DoclerLabs](http://doclerlabs.com)
 
 ![](http://c.statcounter.com/10870964/0/443694a8/1/)
