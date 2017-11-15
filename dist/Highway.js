@@ -48,10 +48,18 @@ var Highway = function () {
   * Proxy object
   * @static
   */
+
+
+	/**
+  * Bucket to store handlers
+  * @type {{*: {handlers: Array}}}
+  */
 	function Highway() {
 		var Proxy = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : self;
 
 		_classCallCheck(this, Highway);
+
+		this.AllowExe = true;
 
 		this.Proxy = Proxy;
 		this.reset();
@@ -68,8 +76,8 @@ var Highway = function () {
 
 
 	/**
-  * Bucket to store handlers
-  * @type {{*: {handlers: Array}}}
+  * Allow the usage of exe?
+  * @type {boolean}
   */
 
 
@@ -204,7 +212,9 @@ var Highway = function () {
 		value: function _bind() {
 			this.Proxy.addEventListener(this.handler);
 			this.sub(EV_EXECUTE, function (ev) {
-				new Function(ev.data).call(self);
+				if (this.AllowExe) {
+					new Function(ev.data).call(self);
+				}
 			});
 		}
 

@@ -95,7 +95,7 @@ HW.exe(() => {
 #### Disable exe
 
 ```js
-HW.allowExe = false
+HW.AllowExe = false
 ```
 
 > You might want to disable this if you're using Node as you backend for example.

@@ -38,6 +38,12 @@ export default class Highway {
 	Bucket
 
 	/**
+	 * Allow the usage of exe?
+	 * @type {boolean}
+	 */
+	AllowExe = true
+
+	/**
 	 * @constructor
 	 * @param Proxy
 	 */
@@ -152,7 +158,9 @@ export default class Highway {
 	_bind() {
 		this.Proxy.addEventListener(this.handler)
 		this.sub(EV_EXECUTE, function(ev){
-			(new Function(ev.data)).call(self)
+			if (this.AllowExe) {
+				(new Function(ev.data)).call(self)
+			}
 		})
 	}
 
