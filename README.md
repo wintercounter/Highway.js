@@ -127,7 +127,7 @@ HW.destroy()
 - Iframe
 - WebWorker: for both Web and Service Workers
 
-#Credits
+# Credits
 [Victor Vincent](http://wintercounter.me)
 
 ![](http://c.statcounter.com/10870964/0/443694a8/1/)
