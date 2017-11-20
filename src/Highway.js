@@ -183,6 +183,9 @@ export default class Highway {
 		let parsed = this.Bucket
 		let nope   = false
 
+		// Event isn't coming from Highway
+		if (!ev.data || !ev.data.name) return
+
 		parsed['*'].handlers.forEach((fn) => fn.call(null, ev.data))
 		ev.data.name.split(DELIMITER).forEach((segment) => {
 			if (!nope && parsed.hasOwnProperty(segment)) {

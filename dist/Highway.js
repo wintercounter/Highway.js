@@ -237,6 +237,9 @@ var Highway = function () {
 			var parsed = this.Bucket;
 			var nope = false;
 
+			// Event isn't coming from Highway
+			if (!ev.data || !ev.data.name) return;
+
 			parsed['*'].handlers.forEach(function (fn) {
 				return fn.call(null, ev.data);
 			});
